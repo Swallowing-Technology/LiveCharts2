@@ -56,7 +56,7 @@ public partial class MotionCanvas : ContentView
         if (skiaElement is null)
             throw new Exception(
                 $"SkiaElement not found. This was probably caused because the control {nameof(MotionCanvas)} template was overridden, " +
-                $"If you override the template please add an {nameof(SKCanvasView)} to the template and name it 'skiaElement'");
+                $"If you override the template please add an {nameof(SKGLView)} to the template and name it 'skiaElement'");
 
         _density = DeviceDisplay.MainDisplayInfo.Density;
 
@@ -80,7 +80,7 @@ public partial class MotionCanvas : ContentView
     /// <value>
     /// The sk canvas view.
     /// </value>
-    public SKCanvasView SkCanvasView => skiaElement;
+    public SKGLView SkCanvasView => skiaElement;
 
     /// <summary>
     /// Gets or sets the frames per second.
@@ -131,11 +131,11 @@ public partial class MotionCanvas : ContentView
         }
     }
 
-    private void OnCanvasViewPaintSurface(object? sender, SKPaintSurfaceEventArgs args)
+    private void OnCanvasViewPaintSurface(object? sender, SKPaintGLSurfaceEventArgs args)
     {
         args.Surface.Canvas.Scale((float)_density, (float)_density);
 
-        CanvasCore.DrawFrame(new SkiaSharpDrawingContext(CanvasCore, args.Info, args.Surface, args.Surface.Canvas));
+        CanvasCore.DrawFrame(new SkiaSharpDrawingContext(CanvasCore, new SkiaSharp.SKImageInfo((int)Width, (int)Height), args.Surface, args.Surface.Canvas));
     }
 
     private void OnCanvasCoreInvalidated(MotionCanvas<SkiaSharpDrawingContext> sender)
